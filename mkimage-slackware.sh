@@ -6,7 +6,7 @@ set -e
 user=${SUDO_USER:-${USER}}
 IMG_NAME=${IMG_NAME:-"${user}/slackware-base"}
 VERSION=${VERSION:="14.1"}
-RELEASE=${RELEASE:-"slackware64-${VERSION}"}
+RELEASE=${RELEASE:-"slackware-${VERSION}"}
 MIRROR=${MIRROR:-"http://slackware.osuosl.org"}
 CACHEFS=${CACHEFS:-"/tmp/slackware/${RELEASE}"}
 #ROOTFS=${ROOTFS:-"/tmp/rootfs-${IMG_NAME}-$$-${RANDOM}"}

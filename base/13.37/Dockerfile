@@ -1,3 +1,3 @@
-FROM vbatts/slackware-base:13.37
-MAINTAINER Vincent Batts <vbatts@slackware.com>
+FROM yukoff/slackware-base-32bit:13.37
+MAINTAINER Yury Buldakov <yury.buldakov@gmail.com>
 

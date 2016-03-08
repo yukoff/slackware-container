@@ -1,17 +1,17 @@
-vbatts/slackware
-================
+yukoff/slackware-32bit
+======================
 
-base image of slackware64-current
+base image of slackware-current
 
 Index
 =====
 
-This is this build process used to be the base of 'vbatts/slackware' on the
+This is this build process used to be the base of 'yukoff/slackware-32bit' on the
 http://index.docker.io/
 
 Just running:
 
-	$> sudo docker run -i -t vbatts/slackware:current /bin/sh
+	$> sudo docker run -i -t yukoff/slackware-32bit:current /bin/sh
 
 Will pull down this image for testing.
 
@@ -23,6 +23,7 @@ License
 =======
 
 Copyright (c) 2013, Vincent Batts <vbatts@hashbangbash.com>
+Copyright (c) 2016, Yury Buldakov <yury.buldakov@gmail.com>
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

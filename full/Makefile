@@ -1,6 +1,6 @@
 
 DOCKER		?= $(shell which docker)
-FROM_IMAGE	?= vbatts/slackware
+FROM_IMAGE	?= yukoff/slackware-32bit
 FROM_TAG	?= latest
 FROM		:= $(FROM_IMAGE):$(FROM_TAG)
 REGISTRY	?= docker.usersys

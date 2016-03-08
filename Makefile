@@ -1,5 +1,5 @@
 VERSION := 14.1
-RELEASE := slackware64-$(VERSION)
+RELEASE := slackware-$(VERSION)
 MIRROR := http://slackware.osuosl.org
 CACHEFS := /tmp/slackware/$(RELEASE)
 ROOTFS := /tmp/rootfs-slackware
