@@ -50,8 +50,8 @@ please hack on this and send feedback!
 License
 =======
 
-Copyright (c) 2013, Vincent Batts <vbatts@hashbangbash.com>
-Copyright (c) 2016, Yury Buldakov <yury.buldakov@gmail.com>
+Copyright (c) 2013, Vincent Batts <vbatts@hashbangbash.com><br />
+Copyright (c) 2016, Yury Buldakov <yury.buldakov@gmail.com><br />
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
