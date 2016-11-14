@@ -1,5 +1,5 @@
-yukoff/slackware-32bit
-======================
+yukoff/slackware-32bit:14.1
+===========================
 
 base image of slackware-14.1
 
@@ -10,10 +10,6 @@ This is this build process used to be the base of 'yukoff/slackware-32bit' on th
 http://index.docker.io/
 
 Just running:
-
-	$> sudo docker run -i -t yukoff/slackware-32bit /bin/sh
-
-or
 
 	$> sudo docker run -i -t yukoff/slackware-32bit:14.1 /bin/sh
 
