@@ -4,7 +4,7 @@
 
 set -e
 user=${SUDO_USER:-${USER}}
-IMG_NAME=${IMG_NAME:-"${user}/slackware-base"}
+IMG_NAME=${IMG_NAME:-"${user}/slackware-base-32bit"}
 VERSION=${VERSION:="14.2"}
 RELEASE=${RELEASE:-"slackware-${VERSION}"}
 MIRROR=${MIRROR:-"http://slackware.osuosl.org"}
