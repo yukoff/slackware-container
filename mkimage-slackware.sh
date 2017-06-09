@@ -1,16 +1,25 @@
 #!/bin/bash
-# Generate a very minimal filesystem from slackware,
-# and load it into the local docker under the name "slackware".
+# Generate a very minimal filesystem from slackware
 
 set -e
-user=${SUDO_USER:-${USER}}
-IMG_NAME=${IMG_NAME:-"${user}/slackware-base-32bit"}
-VERSION=${VERSION:="14.2"}
-RELEASE=${RELEASE:-"slackware-${VERSION}"}
+# user=${SUDO_USER:-${USER}}
+# IMG_NAME=${IMG_NAME:-"${user}/slackware-base-32bit"}
+
+if [ -z "$ARCH" ]; then
+  case "$( uname -m )" in
+    i?86) ARCH="" ;;
+    arm*) ARCH=arm ;;
+       *) ARCH=64 ;;
+  esac
+fi
+
+BUILD_NAME=${BUILD_NAME:-"slackware"}
+VERSION=${VERSION:="current"}
+RELEASENAME=${RELEASENAME:-"slackware${ARCH}"}
+RELEASE=${RELEASE:-"${RELEASENAME}-${VERSION}"}
 MIRROR=${MIRROR:-"http://slackware.osuosl.org"}
 CACHEFS=${CACHEFS:-"/tmp/slackware/${RELEASE}"}
-#ROOTFS=${ROOTFS:-"/tmp/rootfs-${IMG_NAME}-$$-${RANDOM}"}
-ROOTFS=${ROOTFS:-"/tmp/rootfs-${IMG_NAME}"}
+ROOTFS=${ROOTFS:-"/tmp/rootfs-${BUILD_NAME}"}
 CWD=$(pwd)
 
 base_pkgs="a/aaa_base \
@@ -19,6 +28,7 @@ base_pkgs="a/aaa_base \
 	a/glibc-solibs \
 	a/aaa_terminfo \
 	a/pkgtools \
+	a/shadow \
 	a/tar \
 	a/xz \
 	a/bash \
@@ -47,6 +57,7 @@ base_pkgs="a/aaa_base \
 	a/which \
 	a/util-linux \
 	l/mpfr \
+	l/libunistring \
 	ap/diffutils \
 	a/procps \
 	n/net-tools \
@@ -125,15 +136,14 @@ chroot . sh -c 'slackpkg -batch=on -default_answer=y update && slackpkg -batch=o
 set +x
 rm -rf var/lib/slackpkg/*
 rm -rf usr/share/locale/*
+rm -rf usr/man/*
 find usr/share/terminfo/ -type f ! -name 'linux' -a ! -name 'xterm' -a ! -name 'screen.linux' -exec rm -f "{}" \;
 umount $ROOTFS/dev
 rm -f dev/* # containers should expect the kernel API (`mount -t devtmpfs none /dev`)
 umount etc/resolv.conf
 
-tar --numeric-owner -cf- . > ${CWD}/${USER}-${RELEASE}.tar
-cat ${CWD}/${USER}-${RELEASE}.tar | docker import - ${IMG_NAME}:${VERSION}
-docker run -i --rm ${IMG_NAME}:${VERSION} /bin/echo "${IMG_NAME}:${VERSION} :: Success."
-ls -sh ${CWD}/${USER}-${RELEASE}.tar
+tar --numeric-owner -cf- . > ${CWD}/${RELEASE}.tar
+ls -sh ${CWD}/${RELEASE}.tar
 
 for dir in cdrom dev sys proc ; do
 	if mount | grep -q $ROOTFS/$dir  ; then

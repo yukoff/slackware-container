@@ -1,7 +1,7 @@
-yukoff/slackware-32bit:current
-==============================
+yukoff/slackware-32bit:14.0
+===========================
 
-base image of slackware-current
+base image of slackware-14.0
 
 Index
 =====
@@ -11,7 +11,7 @@ http://index.docker.io/
 
 Just running:
 
-	$> sudo docker run -i -t yukoff/slackware-32bit:current /bin/sh
+	$> sudo docker run -i -t yukoff/slackware-32bit:14.0 /bin/sh
 
 Will pull down this image for testing.
 

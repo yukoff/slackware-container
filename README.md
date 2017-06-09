@@ -1,5 +1,5 @@
 slackware-docker
-===============
+================
 
 build scripts for a slackware docker image
 
