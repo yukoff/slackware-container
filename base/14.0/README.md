@@ -23,7 +23,6 @@ License
 =======
 
 Copyright (c) 2013, Vincent Batts <vbatts@hashbangbash.com>
-Copyright (c) 2016, Yury Buldakov <yury.buldakov@gmail.com>
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

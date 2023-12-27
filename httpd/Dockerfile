@@ -1,5 +1,5 @@
 FROM yukoff/slackware-32bit
-MAINTAINER Yury Buldakov <yury.buldakov@gmail.com>
+MAINTAINER yukoff
 
 RUN slackpkg -batch=on -default_answer=y update
 RUN slackpkg -batch=on -default_answer=y install httpd-2.4.6-i486-1 apr-util-1.5.1-i486-1 sqlite-3.7.17-i486-1 cyrus-sasl-2.1.23-i486-5 apr-1.4.6-i486-1

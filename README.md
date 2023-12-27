@@ -1,27 +1,31 @@
-slackware-docker
-================
+# slackware-container
 
-build scripts for a slackware docker image
+build scripts for a slackware container image
 
-Overview
-========
+## Overview
 
 The Dockerfile is incomplete so far, since it expects a base image to be used.
 It would be possible and understandable to use the 'busybox' image, and build
 from there, but also to have a mkimage-slackware.sh to build the base image.
 
-build
-=====
+## build
 
 Currently, using the installer bootstrap, the mkimage-slackware can create an
 ultra-minimal slackware filesystem. (does not even include pkgtools)
 
-	$> sudo docker -d &
-	$> make image
+If you have [podman](https://github.com/containers/libpod/tree/master/cmd/podman) installed (the is an [SBo build](https://slackbuilds.org/repository/15.0/system/podman/)):
+
+```shell
+CRT="sudo podman" make image
+```
 
 Then you will be able to run:
 
-	$> sudo docker run -i -t $USER/slackware-base /bin/sh
+```shell
+sudo podman run -i -t $USER/slackware-base-32bit /bin/sh
+```
+
+_(this also can be built and run with docker as well. If you build with one, you'll have to push your container build to a container registry before you can pull and run with the other)_
 
 (This will be the environment to build out the Dockerfile from)
 (( see http://docs.docker.com/reference/builder/ for more info on that ))
@@ -29,29 +33,41 @@ Then you will be able to run:
 
 To build alternate versions of slackware, pass gnu-make the RELEASE variable, like:
 
-	$> make image RELEASE=slackware-13.37 IMG_NAME=$HOME/my_slackware:13.37
+```shell
+make image RELEASE=slackware-13.37 IMG_NAME=$HOME/my_slackware:13.37
+```
 
-Index
-=====
+To build and test say slackware-current in a docker container:
+
+```shell
+make run-current
+```
+
+## Index
 
 This is this build process used to be the base of 'yukoff/slackware-32bit' on the
 http://index.docker.io/
 
 Just running:
 
-	$> sudo docker run -i -t yukoff/slackware-32bit /bin/sh
+```shell
+sudo podman run -i -t yukoff/slackware-32bit /bin/sh
+```
+ 
+ or
+
+```shell
+sudo docker run -i -t yukoff/slackware-32bit /bin/sh
+```
 
 Will pull down this image for testing.
 
-Contributing
-============
+## Contributing
 please hack on this and send feedback!
 
-License
-=======
+## License
 
 Copyright (c) 2013, Vincent Batts <vbatts@hashbangbash.com><br />
-Copyright (c) 2016, Yury Buldakov <yury.buldakov@gmail.com><br />
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

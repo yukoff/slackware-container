@@ -1,7 +1,7 @@
-yukoff/slackware-32bit:13.37
-============================
+yukoff/slackware-32bit
+======================
 
-base image of slackware-13.37
+base image of slackware-15.0
 
 Index
 =====
@@ -11,7 +11,11 @@ http://index.docker.io/
 
 Just running:
 
-	$> sudo docker run -i -t yukoff/slackware-32bit:13.37 /bin/sh
+	$> sudo docker run -i -t yukoff/slackware-32bit /bin/sh
+
+or
+
+	$> sudo docker run -i -t yukoff/slackware-32bit:15.0 /bin/sh
 
 Will pull down this image for testing.
 

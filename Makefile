@@ -1,26 +1,34 @@
-LATEST   := 14.2
-VERSION  := $(LATEST)
-VERSIONS := 13.37 14.0 14.1 14.2 current
-NAME     := slackware
-MIRROR   := http://slackware.osuosl.org
+LATEST		= 15.0
+VERSION		= $(LATEST)
+VERSIONS	= 13.0 13.1 13.37 14.0 14.1 14.2 15.0 current
+NAME		= slackware
+MIRROR		= http://mirrors.kernel.org/slackware
 ifeq ($(shell uname -m),x86_64)
-ARCH := 64
+ARCH = 64
 else ifeq ($(patsubst i%86,x86,$(shell uname -m)),x86)
-ARCH :=
+ARCH =
 else ifeq ($(shell uname -m),armv6l)
-ARCH := arm
+ARCH = arm
 else ifeq ($(shell uname -m),aarch64)
-ARCH := arm64
+ARCH = arm64
 else
-ARCH := 64
+ARCH = 64
 endif
-RELEASENAME := slackware$(ARCH)
-RELEASE     := $(RELEASENAME)-$(VERSION)
-CACHEFS     := /tmp/$(NAME)/$(RELEASE)
-ROOTFS      := /tmp/rootfs-$(RELEASE)
-# ROOTFS      := /tmp/rootfs-$(NAME)
+RELEASENAME	?= slackware$(ARCH)
+RELEASE		= $(RELEASENAME)-$(VERSION)
+CACHEFS		= /tmp/$(NAME)/$(RELEASE)
+ROOTFS		= /tmp/rootfs-$(RELEASE)
+# ROOTFS		= /tmp/rootfs-$(NAME)
+#CRT		?= podman
+CRT		?= docker
 
-image: $(RELEASENAME)-$(LATEST).tar
+ifeq ($(CRT), podman)
+CRTCMD         := CMD=/bin/sh
+else
+CRTCMD         := CMD /bin/sh
+endif
+
+image: $(RELEASENAME)-$(VERSION).tar
 
 arch:
 	@echo $(ARCH)
@@ -37,24 +45,40 @@ all: mkimage-slackware.sh
 	for version in $(VERSIONS) ; do \
 		$(MAKE) $(RELEASENAME)-$${version}.tar && \
 		$(MAKE) VERSION=$${version} clean && \
-		cat $(RELEASENAME)-$${version}.tar | docker import -c "CMD [\"sh\"]" - $(USER)/$(NAME):$${version} && \
-		docker run -i --rm $(USER)/$(NAME):$${version} /usr/bin/echo "$(USER)/$(NAME):$${version} :: Success." ; \
+		$(MAKE) import-$${version} && \
+		$(MAKE) run-test-$${version} ; \
 	done && \
-	docker tag $(USER)/$(NAME):$(LATEST) $(USER)/$(NAME):latest
+	$(CRT) tag $(USER)/$(NAME):$(LATEST) $(USER)/$(NAME):latest
+
+import-%: $(RELEASENAME)-%.tar
+	$(CRT) import -c '$(CRTCMD)' $(RELEASENAME)-$*.tar $(USER)/$(NAME):$*
+
+run-%: import-%
+	$(CRT) run -it --rm $(USER)/$(NAME):$*
+
+run-test-%:
+	$(CRT) run -i --rm $(USER)/$(NAME):$* /usr/bin/echo "$(USER)/$(NAME):$* :: Success."
 
 .PHONY: umount
 umount:
+	@sudo umount $(ROOTFS)/etc/resolv.conf || :
+	@sudo umount $(ROOTFS)/mnt/etc/resolv.conf || :
 	@sudo umount $(ROOTFS)/cdrom || :
 	@sudo umount $(ROOTFS)/dev || :
 	@sudo umount $(ROOTFS)/sys || :
 	@sudo umount $(ROOTFS)/proc || :
-	@sudo umount $(ROOTFS)/etc/resolv.conf || :
 
 .PHONY: clean
 clean: umount
 	sudo rm -rf $(ROOTFS) $(CACHEFS)/paths
 
+.PHONY: clean-all
+clean-all:
+	for version in $(VERSIONS) ; do \
+		$(MAKE) VERSION=$${version} clean ; \
+	done
+
 .PHONY: dist-clean
-dist-clean: clean
+dist-clean: clean-all
 	sudo rm -rf $(CACHEFS)
 
