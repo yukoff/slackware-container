@@ -7,15 +7,26 @@ set -e
 
 if [ -z "$ARCH" ]; then
   case "$( uname -m )" in
-    i?86) ARCH="" ;;
+    i?86) ARCH=i586 ;;
     arm*) ARCH=arm ;;
-       *) ARCH=64 ;;
+       *) ARCH=$( uname -m ) ;;
   esac
+fi
+
+if [ "$ARCH" = "i586" -o "$ARCH" = "i686" ]; then
+  ARCHSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+  ARCHSUFFIX="64"
+else
+  case "$ARCH" in
+    arm*|aarch*) MIRROR=http://ftp.arm.slackware.com/slackwarearm ; BUILD_NAME=${BUILD_NAME:-"slackwarearm"} ;;
+  esac
+  ARCHSUFFIX="$ARCH"
 fi
 
 BUILD_NAME=${BUILD_NAME:-"slackware"}
 VERSION=${VERSION:="current"}
-RELEASENAME=${RELEASENAME:-"slackware${ARCH}"}
+RELEASENAME=${RELEASENAME:-"slackware${ARCHSUFFIX}"}
 RELEASE=${RELEASE:-"${RELEASENAME}-${VERSION}"}
 MIRROR=${MIRROR:-"https://mirrors.kernel.org/slackware"}
 CACHEFS=${CACHEFS:-"/tmp/${BUILD_NAME}/${RELEASE}"}
@@ -85,23 +96,23 @@ function cacheit() {
 	if [ ! -f "${CACHEFS}/${file}"  ] ; then
 		mkdir -p $(dirname ${CACHEFS}/${file})
 		echo "Fetching ${MIRROR}/${RELEASE}/${file}" >&2
-		curl -s -o "${CACHEFS}/${file}" "${MIRROR}/${RELEASE}/${file}"
+		curl -f -s -o "${CACHEFS}/${file}" "${MIRROR}/${RELEASE}/${file}" || return 1
 	fi
 	echo "/cdrom/${file}"
 }
 
 mkdir -p $ROOTFS $CACHEFS
 
-cacheit "isolinux/initrd.img"
+cacheit "isolinux/initrd.img" || cacheit "isolinux/initrd-armv7.img" || cacheit "isolinux/initrd-versatile.img"
 
 cd $ROOTFS
 # extract the initrd to the current rootfs
 ## ./slackware64-14.2/isolinux/initrd.img:    gzip compressed data, last modified: Fri Jun 24 21:14:48 2016, max compression, from Unix, original size 68600832
 ## ./slackware64-current/isolinux/initrd.img: XZ compressed data
-if $(file ${CACHEFS}/isolinux/initrd.img | grep -wq XZ) ; then
-	xzcat "${CACHEFS}/isolinux/initrd.img" | cpio -idvm --null --no-absolute-filenames
+if $(file ${CACHEFS}/isolinux/initrd*.img | grep -wq XZ) ; then
+	xzcat ${CACHEFS}/isolinux/initrd*.img | cpio -idvm --null --no-absolute-filenames
 else
-	zcat "${CACHEFS}/isolinux/initrd.img" | cpio -idvm --null --no-absolute-filenames
+	zcat ${CACHEFS}/isolinux/initrd*.img | cpio -idvm --null --no-absolute-filenames
 fi
 
 if stat -c %F $ROOTFS/cdrom | grep -q "symbolic link" ; then

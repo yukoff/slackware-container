@@ -1,8 +1,9 @@
-LATEST		= 15.0
+LATEST		?= 15.0
 VERSION		= $(LATEST)
 VERSIONS	= 13.0 13.1 13.37 14.0 14.1 14.2 15.0 current
 NAME		= slackware
 MIRROR		= http://mirrors.kernel.org/slackware
+ifeq ($(strip $(ARCH)),)
 ifeq ($(shell uname -m),x86_64)
 ARCH = 64
 else ifeq ($(patsubst i%86,x86,$(shell uname -m)),x86)
@@ -14,6 +15,7 @@ ARCH = arm64
 else
 ARCH = 64
 endif
+endif
 RELEASENAME	?= slackware$(ARCH)
 RELEASE		= $(RELEASENAME)-$(VERSION)
 CACHEFS		= /tmp/$(NAME)/$(RELEASE)
@@ -23,9 +25,9 @@ ROOTFS		= /tmp/rootfs-$(RELEASE)
 CRT		?= docker
 
 ifeq ($(CRT), podman)
-CRTCMD         := CMD=/bin/sh
+CRTCMD		:= CMD=/bin/sh
 else
-CRTCMD         := CMD /bin/sh
+CRTCMD		:= CMD /bin/sh
 endif
 
 image: $(RELEASENAME)-$(VERSION).tar
@@ -39,6 +41,7 @@ $(RELEASENAME)-%.tar: mkimage-slackware.sh
 		VERSION="$*" \
 		USER="$(USER)" \
 		BUILD_NAME="$(NAME)" \
+		ARCH="$(ARCH)" \
 		bash $<
 
 all: mkimage-slackware.sh
